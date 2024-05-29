@@ -36,5 +36,5 @@ runcmd:
 - /sbin/ip6tables-save > /etc/sysconfig/ip6tables
 - systemctl enable --now iptables
 - tmux new-session -d -s mitmproxy '/usr/bin/mitmproxy --mode transparent --showhost'
-- sleep 3 && cat ~/.mitmproxy/mitmproxy-ca-cert.pem | nc termbin.com 9999
-- echo "Download the CA cert from the link above. To observe traffic flowing through the proxy, SSH-in and run 'sudo tmux attach -t mitmproxy'"
+- sleep 10 && cat ~/.mitmproxy/mitmproxy-ca-cert.pem | nc termbin.com 9999 | tee /dev/ttyS0
+- echo "Download the CA cert from the link above. To observe traffic flowing through the proxy, SSH-in and run 'sudo tmux attach -t mitmproxy'" | tee /dev/ttyS0
