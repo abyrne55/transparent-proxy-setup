@@ -4,13 +4,17 @@
 packages:
   - iptables
   - iptables-nft-services
-  - nmap-ncat
   - tmux
 write_files:
 - encoding: b64
   content: bmV0LmlwdjQuaXBfZm9yd2FyZCA9IDEKbmV0LmlwdjYuY29uZi5hbGwuZm9yd2FyZGluZyA9IDEKbmV0LmlwdjQuY29uZi5hbGwuc2VuZF9yZWRpcmVjdHMgPSAwCg==
   owner: root:root
   path: /etc/sysctl.d/mitmproxy.conf
+  permissions: '0644'
+- encoding: b64
+  content: W1VuaXRdCkRlc2NyaXB0aW9uPW1pdG1wcm94eSB3ZWIgZGFlbW9uCkFmdGVyPW5ldHdvcmsudGFyZ2V0CldhbnRzPW5ldHdvcmsudGFyZ2V0IGlwdGFibGVzLnNlcnZpY2UKCltTZXJ2aWNlXQpUeXBlPXNpbXBsZQpVc2VyPXJvb3QKRXhlY1N0YXJ0PS91c3IvYmluL21pdG13ZWIgLS13ZWItcG9ydD04MDgxIC0td2ViLWhvc3Q9MC4wLjAuMCAtLW5vLXdlYi1vcGVuLWJyb3dzZXIgLS1tb2RlPXRyYW5zcGFyZW50IC0tc2hvd2hvc3QKUmVzdGFydD1hbHdheXMKCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldAo=
+  owner: root:root
+  path: /etc/systemd/system/mitmproxy.service
   permissions: '0644'
 runcmd:
 - sysctl -p /etc/sysctl.d/mitmproxy.conf
@@ -34,7 +38,7 @@ runcmd:
 - ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 8080
 - /sbin/iptables-save > /etc/sysconfig/iptables
 - /sbin/ip6tables-save > /etc/sysconfig/ip6tables
-- systemctl enable --now iptables
-- tmux new-session -d -s mitmproxy '/usr/bin/mitmproxy --mode transparent --showhost'
-- sleep 10 && cat ~/.mitmproxy/mitmproxy-ca-cert.pem | nc termbin.com 9999 | tee /dev/ttyS0
-- echo "Download the CA cert from the link above. To observe traffic flowing through the proxy, SSH-in and run 'sudo tmux attach -t mitmproxy'" | tee /dev/ttyS0
+- systemctl daemon-reload
+- systemctl enable --now iptables.service mitmproxy.service
+- sleep 10 && cp ~/.mitmproxy/mitmproxy-ca-cert.pem /home/ec2-user/ && chown ec2-user:ec2-user /home/ec2-user/mitmproxy-ca-cert.pem
+- echo "Download the CA cert from /home/ec2-user/mitmproxy-ca-cert.pem. To observe traffic flowing through the proxy, web-browse to port 8081 of this server" | tee /dev/ttyS0

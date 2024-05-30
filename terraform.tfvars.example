@@ -30,6 +30,6 @@ name_prefix = "transparent-proxy"
 # SSH public key to use for ec2-user@proxy-machine
 proxy_machine_ssh_pubkey = "ssh-rsa AAAAB3N...SrbX8ZbabVohBK41 replaceme@example.com"
 
-# A CIDR block containing your workstation's IP, for SSH access to the proxy machine for debugging. 
+# A CIDR block containing your workstation's IP, for SSH/webUI access to the proxy machine for debugging. 
 # Running "echo $(curl -s ipv4.icanhazip.com)/32' should produce a sane default value
-developer_ssh_cidr_block = "123.123.123.123/32"
+developer_cidr_block = "123.123.123.123/32"

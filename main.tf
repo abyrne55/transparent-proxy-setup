@@ -60,9 +60,17 @@ resource "aws_vpc_security_group_ingress_rule" "allow_proxied_traffic" {
 # proxy_machine_sg: Allow SSH traffic from the developer's IP
 resource "aws_vpc_security_group_ingress_rule" "allow_developer_ssh" {
   security_group_id = aws_security_group.proxy_machine_sg.id
-  cidr_ipv4         = var.developer_ssh_cidr_block
+  cidr_ipv4         = var.developer_cidr_block
   from_port         = 22
   to_port           = 22
+  ip_protocol       = "tcp"
+}
+# proxy_machine_sg: Allow webUI traffic from the developer's IP
+resource "aws_vpc_security_group_ingress_rule" "allow_developer_webui" {
+  security_group_id = aws_security_group.proxy_machine_sg.id
+  cidr_ipv4         = var.developer_cidr_block
+  from_port         = 8081
+  to_port           = 8081
   ip_protocol       = "tcp"
 }
 # proxy_machine_sg: Allow all IPv4 egress traffic from the proxy
@@ -149,13 +157,21 @@ output "region" {
 # }
 
 # Output access details for the proxy_machine
-output "proxy_machine_public_ip" {
-  description = "Public IP of proxy machine"
-  value       = aws_instance.proxy_machine.public_ip
+output "proxy_machine_public_dns" {
+  description = "Public DNS name of proxy machine"
+  value       = aws_instance.proxy_machine.public_dns
 }
 output "proxy_machine_ssh_cmd" {
   description = "SSH command for logging into the proxy machine"
-  value       = "ssh ec2-user@${aws_instance.proxy_machine.public_dns}"
+  value       = "ssh ec2-user@${aws_instance.proxy_machine.public_ip}"
+}
+output "proxy_machine_scp_cmd" {
+  description = "SCP command for downloading the proxy's CA cert (available in 2-5 minutes)"
+  value       = "scp ec2-user@${aws_instance.proxy_machine.public_ip}:mitmproxy-ca-cert.pem ./"
+}
+output "proxy_machine_webui_url" {
+  description = "URL for accessing the proxy machine webUI (available in 2-5 minutes)"
+  value       = "http://${aws_instance.proxy_machine.public_ip}:8081/"
 }
 output "proxy_machine_getconsoleoutput_cmd" {
   description = "AWS CLI command for getting the serial console output of the proxy machine"

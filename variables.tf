@@ -40,9 +40,9 @@ variable "proxied_subnet_cidr_block" {
   default     = "10.0.1.0/24" # Default to a /24 block within the 10.0.0.0 private network
 }
 
-# User/developer's CIDR block for SSH access to the proxy machine for debugging
-variable "developer_ssh_cidr_block" {
-  description = "A CIDR block containing your workstation's IP, for SSH access to the proxy machine for debugging. The output of 'echo $(curl -s ipv4.icanhazip.com)/32' is a sane default"
+# User/developer's CIDR block for SSH/webUI access to the proxy machine for debugging
+variable "developer_cidr_block" {
+  description = "A CIDR block containing your workstation's IP, for SSH/webUI access to the proxy machine for debugging. The output of 'echo $(curl -s ipv4.icanhazip.com)/32' is a sane default"
   type        = string
 }
 
