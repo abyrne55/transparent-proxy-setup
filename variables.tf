@@ -46,6 +46,13 @@ variable "developer_cidr_block" {
   type        = string
 }
 
+# Username to use for the proxy machine web UI
+variable "proxy_webui_username" {
+  description = "Username to use for the proxy machine web UI"
+  type        = string
+  default     = "developer"
+}
+
 # Prefix to add to name tags
 variable "name_prefix" {
   description = "prefix to add to the Name tag associated with most of the resources created by these scripts"

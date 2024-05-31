@@ -1,20 +1,36 @@
 #cloud-config
 #package_update: true
 #package_upgrade: true
+yum_repos:
+  caddy:
+    name: Copr repo for caddy owned by @caddy
+    baseurl: https://download.copr.fedorainfracloud.org/results/@caddy/caddy/epel-9-$basearch/
+    type: rpm-md
+    skip_if_unavailable: true
+    gpgcheck: 1
+    gpgkey: https://download.copr.fedorainfracloud.org/results/@caddy/caddy/pubkey.gpg
+    repo_gpgcheck: 0
+    enabled: 1
+    enabled_metadata: 1
 packages:
   - iptables
   - iptables-nft-services
-  - tmux
+  - caddy
 write_files:
 - encoding: b64
-  content: bmV0LmlwdjQuaXBfZm9yd2FyZCA9IDEKbmV0LmlwdjYuY29uZi5hbGwuZm9yd2FyZGluZyA9IDEKbmV0LmlwdjQuY29uZi5hbGwuc2VuZF9yZWRpcmVjdHMgPSAwCg==
+  content: ${mitmproxy_sysctl_b64}
   owner: root:root
   path: /etc/sysctl.d/mitmproxy.conf
   permissions: '0644'
 - encoding: b64
-  content: W1VuaXRdCkRlc2NyaXB0aW9uPW1pdG1wcm94eSB3ZWIgZGFlbW9uCkFmdGVyPW5ldHdvcmsudGFyZ2V0CldhbnRzPW5ldHdvcmsudGFyZ2V0IGlwdGFibGVzLnNlcnZpY2UKCltTZXJ2aWNlXQpUeXBlPXNpbXBsZQpVc2VyPXJvb3QKRXhlY1N0YXJ0PS91c3IvYmluL21pdG13ZWIgLS13ZWItcG9ydD04MDgxIC0td2ViLWhvc3Q9MC4wLjAuMCAtLW5vLXdlYi1vcGVuLWJyb3dzZXIgLS1tb2RlPXRyYW5zcGFyZW50IC0tc2hvd2hvc3QKUmVzdGFydD1hbHdheXMKCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldAo=
+  content:  ${mitmproxy_service_b64}
   owner: root:root
   path: /etc/systemd/system/mitmproxy.service
+  permissions: '0644'
+- encoding: b64
+  content: ${caddyfile_b64}
+  owner: root:root
+  path: /etc/caddy/Caddyfile
   permissions: '0644'
 runcmd:
 - sysctl -p /etc/sysctl.d/mitmproxy.conf
@@ -39,6 +55,5 @@ runcmd:
 - /sbin/iptables-save > /etc/sysconfig/iptables
 - /sbin/ip6tables-save > /etc/sysconfig/ip6tables
 - systemctl daemon-reload
-- systemctl enable --now iptables.service mitmproxy.service
-- sleep 10 && cp ~/.mitmproxy/mitmproxy-ca-cert.pem /home/ec2-user/ && chown ec2-user:ec2-user /home/ec2-user/mitmproxy-ca-cert.pem
-- echo "Download the CA cert from /home/ec2-user/mitmproxy-ca-cert.pem. To observe traffic flowing through the proxy, web-browse to port 8081 of this server" | tee /dev/ttyS0
+- systemctl enable --now iptables.service mitmproxy.service caddy.service
+- sleep 10 && cp ~/.mitmproxy/mitmproxy-ca-cert.pem /usr/share/caddy/ && chmod -R 755 /usr/share/caddy/mitmproxy-ca-cert.pem

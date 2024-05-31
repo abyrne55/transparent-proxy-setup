@@ -1,5 +1,7 @@
+## Sample Variables 
+## Fill in the values below and rename me to "terraform.tfvars" 
+
 # Your AWS Profile
-# Replace "default" with the name of the profile you want to use
 # This profile should be configured in your AWS credentials file, typically located at ~/.aws/credentials on Unix-based systems and C:\Users\USERNAME\.aws\credentials on Windows. 
 # The profile configuration should look something like this:
 # 
