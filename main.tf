@@ -143,7 +143,7 @@ resource "aws_route_table" "proxied" {
   tags   = { Name = "${var.name_prefix}-proxied-rtb" }
 
   route {
-    cidr_block           = "0.0.0.0/0"
+    cidr_block           = var.proxied_subnet_cidr_block
     network_interface_id = aws_instance.proxy_machine.primary_network_interface_id
   }
 }
@@ -188,6 +188,14 @@ output "proxy_machine_cert_url" {
 output "proxied_subnet_id" {
   description = "Proxied subnet ID (launch your test/'captive' instances here)"
   value       = aws_subnet.proxied.id
+}
+output "http_proxy_var" {
+  description = "value for HTTP_PROXY"
+  value       = "${aws_instance.proxy_machine.private_ip}:80"
+}
+output "https_proxy_var" {
+  description = "value for HTTPS_PROXY"
+  value       = "${aws_instance.proxy_machine.private_ip}:443"
 }
 # output "public_subnet_id" {
 #   description = "The ID of the Public Subnet"
