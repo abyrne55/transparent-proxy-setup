@@ -1,6 +1,9 @@
 # transparent-proxy-setup
 Terraform scripts for setting up an AWS VPC with a [mitmproxy](https://mitmproxy.org/)-based transparent proxy
 
+# Archival Notice
+This repo was merged into [openshift/osd-network-verifier](https://github.com/openshift/osd-network-verifier) in October 2024. The content over there contains better docs, a non-transparent version of the terraform code here, and will contain any future improvements/fixes. See https://github.com/openshift/osd-network-verifier/tree/main/examples/aws/terraform
+
 ## Prerequisites
  * Terraform or OpenTofu
  * An AWS account with a credentials profile saved to "~/.aws/credentials"
